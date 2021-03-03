@@ -1,0 +1,57 @@
+#include <LiquidCrystal.h>
+
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+int sensorState = 0;
+int veces = 0;
+
+void setup()
+{
+  Serial.begin(9600);
+  lcd.begin(16,2);
+  pinMode(7,INPUT);
+  pinMode(6, OUTPUT);
+  pinMode(9, OUTPUT);
+  pinMode(8, OUTPUT);
+  lcd.print("Num. Objetos:");
+}
+
+void loop()
+{
+  int a = digitalRead(7);
+  Serial.println(a);
+  
+  if(a==1 && sensorState==0)
+  {
+    sensorState=1;
+    veces++;
+    lcd.setCursor(14,0);
+    lcd.print("        ");
+    lcd.setCursor(14,0);
+    lcd.print(veces);
+  }
+  if(a==0 && sensorState==1)
+    sensorState=0;
+    
+  if (veces== 1)
+      digitalWrite(9, HIGH);
+  
+  if (veces== 3)
+  {
+     digitalWrite(9, LOW);
+     digitalWrite(8, HIGH);
+  }
+  
+  if (veces== 5)
+  {
+    digitalWrite(9, LOW);
+    digitalWrite(8, LOW);
+    lcd.setCursor(0,1);
+    lcd.print("Caja Completada");
+    digitalWrite(6,HIGH);
+    delay(5000);
+    lcd.clear();
+    lcd.print("Num. Objetos:");
+    digitalWrite(6,LOW);
+    veces=0;
+  }
+}
